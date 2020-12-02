@@ -28,7 +28,7 @@ questions = [Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8]
 
 gpu = torch.device('cuda')
 model = T5ForConditionalGeneration.from_pretrained('t5-large').to(gpu)
-tokenizer = T5Tokenizer.from_pretrained('t5-base')
+tokenizer = T5Tokenizer.from_pretrained('t5-large')
 
 
 # Q: What project put the first Americans into space?

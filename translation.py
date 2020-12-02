@@ -8,7 +8,7 @@ context = "This image section from an infrared recording by the Spitzer telescop
 
 gpu = torch.device('cuda')
 model = T5ForConditionalGeneration.from_pretrained('t5-large').to(gpu)
-tokenizer = T5Tokenizer.from_pretrained('t5-base')
+tokenizer = T5Tokenizer.from_pretrained('t5-large')
 tokens_input = tokenizer.encode(text="translate English to French: " + context, return_tensors="pt",
                                 max_length=1024, truncation=True)
 summary_ids = model.generate(tokens_input.to(gpu), min_length=60, max_length=1024, length_penalty=4.0)

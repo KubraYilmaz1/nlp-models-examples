@@ -11,7 +11,7 @@ test_data = [{
 
 gpu = torch.device('cuda')
 model = T5ForConditionalGeneration.from_pretrained('t5-large').to(gpu)
-tokenizer = T5Tokenizer.from_pretrained('t5-base')
+tokenizer = T5Tokenizer.from_pretrained('t5-large')
 for pair in test_data:
     tokens_input = tokenizer.encode(text="mrpc sentence1: " + pair['sentence1'] + " sentence2: " + pair['sentence2'],
                                     return_tensors="pt", max_length=1024, truncation=True)
