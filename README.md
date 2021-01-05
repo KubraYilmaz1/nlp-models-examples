@@ -9,4 +9,4 @@
 
 ### [Text classification fine-tuning](https://github.com/dredwardhyde/t5-model-examples/blob/main/classification_fine_tuning.py)  
 ### Results:
-<img src="https://raw.githubusercontent.com/dredwardhyde/t5-model-examples/main/results.png" width="667"/>  
+<img src="https://raw.githubusercontent.com/dredwardhyde/t5-model-examples/main/results.png" width="656"/>  
