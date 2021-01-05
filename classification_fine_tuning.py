@@ -6,7 +6,6 @@ import shutil
 import sys
 import tarfile
 from io import BytesIO
-
 import requests
 import torch
 from colorama import Fore
@@ -82,14 +81,12 @@ class ImdbDataset(Dataset):
             self.targets.append(tokenized_targets)
 
 
-dataset_val = ImdbDataset(tokenizer, base_dir, 'val', max_len=512)
-dataset_train = ImdbDataset(tokenizer, base_dir, 'train', max_len=512)
-
+dataloader_train = DataLoader(ImdbDataset(tokenizer, base_dir, 'train', max_len=512), batch_size=12, drop_last=True, shuffle=True)
+dataloader_val = DataLoader(ImdbDataset(tokenizer, base_dir, 'val', max_len=512), batch_size=12)
 # ============================================ HYPERPARAMETERS =========================================================
 learning_rate = 3e-4
 adam_epsilon = 1e-8
-epochs = 2
-
+epochs = 4
 # ================================================= MODEL ==============================================================
 model = T5ForConditionalGeneration.from_pretrained('t5-base').to(device=gpu)
 no_decay = ["bias", "LayerNorm.weight"]
@@ -100,20 +97,16 @@ optimizer_grouped_parameters = [
      "weight_decay": 0.0, },
 ]
 optimizer = AdamW(optimizer_grouped_parameters, lr=learning_rate, eps=adam_epsilon)
-dataloader_train = DataLoader(dataset_train, batch_size=12, drop_last=True, shuffle=True)
-dataloader_val = DataLoader(dataset_val, batch_size=12)
-
 # ================================================ TRAINING MODEL ======================================================
 for epoch in range(1, epochs + 1):
     # ============================================ TRAINING ============================================================
     print("Training epoch ", str(epoch))
-    training_pbar = tqdm(total=len(dataset_train),
-                         position=0, leave=True,
-                         file=sys.stdout, bar_format="{l_bar}%s{bar:50}%s{r_bar}" % (Fore.GREEN, Fore.RESET))
     model.train()
     tr_loss = 0
     nb_tr_steps = 0
-    for _, batch in enumerate(dataloader_train):
+    for batch in tqdm(dataloader_train,
+                      position=0, leave=True,
+                      file=sys.stdout, bar_format="{l_bar}%s{bar:50}%s{r_bar}" % (Fore.GREEN, Fore.RESET)):
         lm_labels = batch["target_ids"]
         lm_labels[lm_labels[:, :] == tokenizer.pad_token_id] = -100
         optimizer.zero_grad()
@@ -126,17 +119,14 @@ for epoch in range(1, epochs + 1):
         optimizer.step()
         tr_loss += loss.item()
         nb_tr_steps += 1
-        training_pbar.update(lm_labels.size(0))
-    training_pbar.close()
     print(f"\nTraining loss={tr_loss / nb_tr_steps:.4f}")
     # ============================================ VALIDATION ==========================================================
     model.eval()
-    validation_pbar = tqdm(total=len(dataset_val),
-                           position=0, leave=True,
-                           file=sys.stdout, bar_format="{l_bar}%s{bar:50}%s{r_bar}" % (Fore.BLUE, Fore.RESET))
     val_loss = 0
     nb_val_steps = 0
-    for _, batch in enumerate(dataloader_val):
+    for batch in tqdm(dataloader_val,
+                      position=0, leave=True,
+                      file=sys.stdout, bar_format="{l_bar}%s{bar:50}%s{r_bar}" % (Fore.BLUE, Fore.RESET)):
         lm_labels = batch["target_ids"]
         lm_labels[lm_labels[:, :] == tokenizer.pad_token_id] = -100
         outputs = model(batch["source_ids"].to(device=gpu),
@@ -146,11 +136,8 @@ for epoch in range(1, epochs + 1):
         loss = outputs[0]
         val_loss += loss.item()
         nb_val_steps += 1
-        validation_pbar.update(lm_labels.size(0))
-    validation_pbar.close()
     print(f"\nValidation loss={val_loss / nb_val_steps:.4f}")
 torch.save(model.state_dict(), "./weights.pth")
-
 # ============================================ TESTING =================================================================
 model.load_state_dict(torch.load("./weights.pth"))
 dataset_test = ImdbDataset(tokenizer, base_dir, 'test', max_len=512)
@@ -167,4 +154,4 @@ for batch in tqdm(loader, position=0, leave=True,
     target = [tokenizer.decode(ids) for ids in batch["target_ids"]]
     outputs.extend(dec)
     targets.extend(target)
-print(metrics.accuracy_score(targets, outputs))
+print("Accuracy:", metrics.accuracy_score(targets, outputs))
