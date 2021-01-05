@@ -75,11 +75,9 @@ class ImdbDataset(Dataset):
             line = line + ' </s>'
             target = sentiment + " </s>"
             tokenized_inputs = self.tokenizer.batch_encode_plus(
-                [line], max_length=self.max_len, padding='max_length', truncation=True, return_tensors="pt"
-            )
+                [line], max_length=self.max_len, padding='max_length', truncation=True, return_tensors="pt")
             tokenized_targets = self.tokenizer.batch_encode_plus(
-                [target], max_length=2, padding='max_length', truncation=True, return_tensors="pt"
-            )
+                [target], max_length=2, padding='max_length', truncation=True, return_tensors="pt")
             self.inputs.append(tokenized_inputs)
             self.targets.append(tokenized_targets)
 
@@ -96,14 +94,10 @@ epochs = 2
 model = T5ForConditionalGeneration.from_pretrained('t5-base').to(device=gpu)
 no_decay = ["bias", "LayerNorm.weight"]
 optimizer_grouped_parameters = [
-    {
-        "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-        "weight_decay": 0.0,
-    },
-    {
-        "params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
-        "weight_decay": 0.0,
-    },
+    {"params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+     "weight_decay": 0.0, },
+    {"params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
+     "weight_decay": 0.0, },
 ]
 optimizer = AdamW(optimizer_grouped_parameters, lr=learning_rate, eps=adam_epsilon)
 dataloader_train = DataLoader(dataset_train, batch_size=12, drop_last=True, shuffle=True)
