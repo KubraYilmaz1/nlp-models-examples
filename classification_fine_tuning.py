@@ -127,8 +127,7 @@ for epoch in range(1, epochs + 1):
                         attention_mask=batch["source_mask"].to(device=gpu),
                         decoder_attention_mask=batch['target_mask'].to(device=gpu),
                         labels=lm_labels.to(device=gpu))
-        loss = outputs[0]
-        val_loss += loss.item()
+        val_loss += outputs[0].item()
         nb_val_steps += 1
     print(f"\nValidation loss={val_loss / nb_val_steps:.4f}")
 torch.save(model.state_dict(), "./weights.pth")
@@ -149,3 +148,4 @@ for batch in tqdm(loader, position=0, leave=True,
     outputs.extend(dec)
     targets.extend(target)
 print("Accuracy:", metrics.accuracy_score(targets, outputs))
+print(metrics.classification_report(targets, outputs))
