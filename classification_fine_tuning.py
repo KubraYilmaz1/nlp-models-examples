@@ -118,6 +118,8 @@ for epoch in range(1, epochs + 1):
     model.eval()
     val_loss = 0
     nb_val_steps = 0
+    val_outputs = []
+    val_targets = []
     for batch in tqdm(dataloader_val,
                       position=0, leave=True,
                       file=sys.stdout, bar_format="{l_bar}%s{bar:50}%s{r_bar}" % (Fore.BLUE, Fore.RESET)):
@@ -129,7 +131,14 @@ for epoch in range(1, epochs + 1):
                         labels=lm_labels.to(device=gpu))
         val_loss += outputs[0].item()
         nb_val_steps += 1
-    print(f"\nValidation loss={val_loss / nb_val_steps:.4f}")
+        outs = model.generate(input_ids=batch['source_ids'].cuda(),
+                              attention_mask=batch['source_mask'].cuda(),
+                              max_length=2)
+        dec = [tokenizer.decode(ids) for ids in outs]
+        target = [tokenizer.decode(ids) for ids in batch["target_ids"]]
+        val_outputs.extend(dec)
+        val_targets.extend(target)
+    print(f"\nValidation loss={val_loss / nb_val_steps:.4f}\nValidation accuracy={metrics.accuracy_score(val_targets, val_outputs)}")
 torch.save(model.state_dict(), "./weights.pth")
 # ============================================ TESTING =================================================================
 model.load_state_dict(torch.load("./weights.pth"))
@@ -147,5 +156,5 @@ for batch in tqdm(loader, position=0, leave=True,
     target = [tokenizer.decode(ids) for ids in batch["target_ids"]]
     outputs.extend(dec)
     targets.extend(target)
-print("Accuracy:", metrics.accuracy_score(targets, outputs))
+print("Test accuracy:", metrics.accuracy_score(targets, outputs))
 print(metrics.classification_report(targets, outputs))
