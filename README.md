@@ -12,3 +12,7 @@ by Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Micha
 ### [Text classification fine-tuning](https://github.com/dredwardhyde/t5-model-examples/blob/main/classification_fine_tuning.py)  
 ### Results:
 <img src="https://raw.githubusercontent.com/dredwardhyde/t5-model-examples/main/results.png" width="649"/>  
+
+# GPT-2 Model Examples  
+### [Text generation in English](https://github.com/dredwardhyde/t5-model-examples/blob/main/gpt2_openai_text_generator.py)  
+### [Text generation in Russian](https://github.com/dredwardhyde/t5-model-examples/blob/main/gpt2_sberbank_text_generator.py)  
