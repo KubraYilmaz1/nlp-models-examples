@@ -31,8 +31,8 @@ def reply(update, context):
     print('Temperature', user_temperature.get(update.effective_chat.id, temperature))
     print('Repetition penalty', user_repetition_penalty.get(update.effective_chat.id, repetition_penalty))
     tokens = tokenizer.encode(update.message.text)
-    for _ in range(length):
-        with torch.no_grad():
+    with torch.no_grad():
+        for _ in range(length):
             logits = model(torch.tensor([tokens], device=gpu))[0]
             next_token_logits = logits[0, -1, :] / user_temperature.get(update.effective_chat.id, temperature)
             for token in set(tokens):
