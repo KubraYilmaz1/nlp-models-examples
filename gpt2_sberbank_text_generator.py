@@ -5,10 +5,10 @@ gpu = torch.device('cuda')
 tokenizer = GPT2Tokenizer.from_pretrained("sberbank-ai/rugpt3large_based_on_gpt2")
 model = GPT2LMHeadModel.from_pretrained("sberbank-ai/rugpt3large_based_on_gpt2").to(device=gpu)
 
-text = "сколько будет два плюс два"
+text = "у меня есть две собаки"
 tokens = tokenizer.encode(text)
 
-length = 4
+length = 150
 repetition_penalty = 1.5
 temperature = 1
 
