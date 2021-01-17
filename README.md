@@ -15,8 +15,10 @@ by Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Micha
 
 # GPT-2 Model Examples  
 ### [Text generation in English](https://github.com/dredwardhyde/t5-model-examples/blob/main/gpt2_openai_text_generator.py)  
+### [Model](https://huggingface.co/transformers/model_doc/gpt2.html)  
 <img src="https://raw.githubusercontent.com/dredwardhyde/t5-model-examples/main/english_text_generation.png" width="750"/>  
 
 ### [Text generation in Russian](https://github.com/dredwardhyde/t5-model-examples/blob/main/gpt2_sberbank_text_generator.py)  
+### [Model](https://github.com/sberbank-ai/ru-gpts)  
 <img src="https://raw.githubusercontent.com/dredwardhyde/t5-model-examples/main/two_plus_two.png" width="750"/>  
 <img src="https://raw.githubusercontent.com/dredwardhyde/t5-model-examples/main/russian_text_generation.png" width="750"/>  
