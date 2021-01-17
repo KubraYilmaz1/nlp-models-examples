@@ -21,7 +21,7 @@ length = 200
 repetition_penalty = 0.1
 temperature = 1
 threshold = 0.3
-n = 4
+n = 3
 
 user_threshold = {}
 user_temperature = {}
