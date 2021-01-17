@@ -21,13 +21,4 @@ for _ in range(length):
     next_token = torch.argmax(next_token_logits).item()
     tokens += [next_token]
 
-# "I have two dogs and one is a pit bull. I don't want to be around them." The dog owner, who did not wish to give
-# his name for fear of reprisals from the animal rights group that has been campaigning against him since he adopted
-# it in 2010, said: "It's very upsetting because they are my family members but we can never go back there now. We
-# will always live with this guilt over what happened here."
-#
-# A new study by researchers at Harvard University suggests that people may actually prefer their own gender when
-# making decisions about romantic partners — even if those choices aren't based on biological sex or sexual
-# orientation. The findings suggest that our preferences might change as society becomes more accepting of same-sex
-# relationships.
 print(tokenizer.decode(tokens))
