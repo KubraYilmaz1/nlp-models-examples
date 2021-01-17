@@ -16,7 +16,7 @@ REQUEST_KWARGS = {
         'password': 'PASSWORD',
     }
 }
-length = 100
+length = 200
 repetition_penalty = 1.5
 temperature = 1
 threshold = 0.3
