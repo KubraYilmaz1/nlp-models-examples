@@ -8,7 +8,7 @@ model = GPT2LMHeadModel.from_pretrained("gpt2-xl", pad_token_id=tokenizer.eos_to
 text = "I have two dogs and one is a"
 tokens = tokenizer.encode(text)
 
-length = 150
+length = 145
 repetition_penalty = 1.5
 temperature = 1
 
