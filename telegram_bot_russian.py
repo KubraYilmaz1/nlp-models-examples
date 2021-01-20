@@ -71,7 +71,7 @@ def set_temperature(update, context):
 
 
 def set_gram(update, context):
-    user_n_gram[update.effective_chat.id] = float(context.args[0])
+    user_n_gram[update.effective_chat.id] = int(context.args[0])
     context.bot.send_message(chat_id=update.effective_chat.id, text="Done!")
 
 
