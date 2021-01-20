@@ -18,8 +18,10 @@ by Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Micha
 ### [Model](https://huggingface.co/transformers/model_doc/gpt2.html)  
 <img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/english_text_generation.png" width="750"/>  
 
-### [Text generation in Russian](https://github.com/dredwardhyde/nlp-models-examples/blob/main/gpt2_sberbank_text_generator.py)  
-### [Telegram chatbot example](https://github.com/dredwardhyde/nlp-models-examples/blob/main/telegram_bot_russian.py)  
+### [Text generation in Russian](https://github.com/dredwardhyde/nlp-models-examples/blob/main/gpt2_sberbank_text_generator.py)
 ### [Model](https://github.com/sberbank-ai/ru-gpts)  
 <img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/two_plus_two.png" width="750"/>  
 <img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/russian_text_generation.png" width="750"/>  
+
+### [Telegram chatbot example](https://github.com/dredwardhyde/nlp-models-examples/blob/main/telegram_bot_russian.py)  
+<img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/chatbot_example.png" width="979"/>  
