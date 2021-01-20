@@ -26,6 +26,7 @@ n = 3
 user_threshold = {}
 user_temperature = {}
 user_repetition_penalty = {}
+user_n_gram = {}
 
 
 def reply(update, context):
@@ -36,10 +37,11 @@ def reply(update, context):
     with torch.no_grad():
         for _ in range(length):
             logits = model(torch.tensor([tokens], device=gpu))[0]
-            ngrams = zip(*[tokens[i:] for i in range(n)])
-            last_ngram_count = Counter(ngrams).get(tuple(tokens[-n:]))
+            effective_n = user_n_gram.get(update.effective_chat.id, n)
+            ngrams = zip(*[tokens[i:] for i in range(effective_n)])
+            last_ngram_count = Counter(ngrams).get(tuple(tokens[-effective_n:]))
             softmax_temp = 1
-            if last_ngram_count > 1:
+            if last_ngram_count is not None and last_ngram_count > 1:
                 softmax_temp = (1 + user_repetition_penalty.get(update.effective_chat.id, repetition_penalty)) ** (last_ngram_count - 1)
             effective_temp = user_temperature.get(update.effective_chat.id, temperature) * softmax_temp
             next_token_logits = logits[0, -1, :] / effective_temp
@@ -68,15 +70,17 @@ def set_temperature(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Done!")
 
 
+def set_gram(update, context):
+    user_n_gram[update.effective_chat.id] = float(context.args[0])
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Done!")
+
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-updater = Updater(TOKEN, use_context=True)
+updater = Updater(TOKEN, request_kwargs=REQUEST_KWARGS, use_context=True)
 dispatcher = updater.dispatcher
-threshold_handler = CommandHandler('th', set_threshold)
-temperature_handler = CommandHandler('temp', set_temperature)
-repetition_penalty_handler = CommandHandler('rp', set_repetition_penalty)
-echo_handler = MessageHandler(Filters.text & (~Filters.command), reply)
-dispatcher.add_handler(threshold_handler)
-dispatcher.add_handler(temperature_handler)
-dispatcher.add_handler(repetition_penalty_handler)
-dispatcher.add_handler(echo_handler)
+dispatcher.add_handler(CommandHandler('th', set_threshold))
+dispatcher.add_handler(CommandHandler('temp', set_temperature))
+dispatcher.add_handler(CommandHandler('rp', set_repetition_penalty))
+dispatcher.add_handler(CommandHandler('gram', set_gram))
+dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), reply))
 updater.start_polling()
