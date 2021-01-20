@@ -24,4 +24,4 @@ by Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Micha
 <img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/russian_text_generation.png" width="750"/>  
 
 ### [Telegram chatbot example](https://github.com/dredwardhyde/nlp-models-examples/blob/main/telegram_bot_russian.py)  
-<img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/chatbot_example.png" width="979"/>  
+<img src="https://raw.githubusercontent.com/dredwardhyde/nlp-models-examples/main/chatbot_example.png" width="750"/>  
