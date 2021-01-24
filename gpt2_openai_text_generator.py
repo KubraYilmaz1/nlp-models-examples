@@ -11,14 +11,22 @@ tokens = tokenizer.encode(text)
 length = 145
 repetition_penalty = 1.5
 temperature = 1
+context = torch.tensor([tokens], device=gpu)
+past_values = None
 
-for _ in range(length):
-    tokens_tensor = torch.tensor([tokens], device=gpu)
-    logits = model(tokens_tensor)[0]
-    next_token_logits = logits[0, -1, :] / temperature
-    for token in set(tokens):
-        next_token_logits[token] /= repetition_penalty
-    next_token = torch.argmax(next_token_logits).item()
-    tokens += [next_token]
+with torch.no_grad():
+    for _ in range(length):
+        outputs = model(context, past_key_values=past_values)
+        logits = outputs.logits
+        if past_values is None:
+            next_token_logits = logits[0, -1, :] / temperature
+        else:
+            next_token_logits = logits[0, :] / temperature
+        for token in set(tokens):
+            next_token_logits[token] /= repetition_penalty
+        next_token = torch.argmax(next_token_logits)
+        tokens += [next_token.item()]
+        context = next_token.unsqueeze(0)
+        past_values = outputs.past_key_values
 
 print(tokenizer.decode(tokens))

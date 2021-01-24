@@ -33,10 +33,14 @@ def reply(update, context):
     print('Threshold', user_threshold.get(update.effective_chat.id, threshold))
     print('Temperature', user_temperature.get(update.effective_chat.id, temperature))
     print('Repetition penalty', user_repetition_penalty.get(update.effective_chat.id, repetition_penalty))
+    print('Gram size', user_n_gram.get(update.effective_chat.id, n))
     tokens = tokenizer.encode(update.message.text)
+    context_gpt = torch.tensor([tokens], device=gpu)
+    past_values = None
     with torch.no_grad():
         for _ in range(length):
-            logits = model(torch.tensor([tokens], device=gpu))[0]
+            outputs = model(context_gpt, past_key_values=past_values)
+            logits = outputs.logits
             effective_n = user_n_gram.get(update.effective_chat.id, n)
             ngrams = zip(*[tokens[i:] for i in range(effective_n)])
             last_ngram_count = Counter(ngrams).get(tuple(tokens[-effective_n:]))
@@ -44,7 +48,10 @@ def reply(update, context):
             if last_ngram_count is not None and last_ngram_count > 1:
                 softmax_temp = (1 + user_repetition_penalty.get(update.effective_chat.id, repetition_penalty)) ** (last_ngram_count - 1)
             effective_temp = user_temperature.get(update.effective_chat.id, temperature) * softmax_temp
-            next_token_logits = logits[0, -1, :] / effective_temp
+            if past_values is None:
+                next_token_logits = logits[0, -1, :] / effective_temp
+            else:
+                next_token_logits = logits[0, :] / effective_temp
             sorted_probs, sorted_indices = torch.sort(torch.softmax(next_token_logits, dim=-1), descending=True)
             cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
             new_idx = torch.sum(cumulative_probs < user_threshold.get(update.effective_chat.id, threshold)) + 1
@@ -52,6 +59,8 @@ def reply(update, context):
             sorted_probs /= torch.sum(sorted_probs)
             res = sorted_indices[torch.multinomial(sorted_probs, num_samples=1).item()]
             tokens += [res.item()]
+            context_gpt = res.unsqueeze(0)
+            past_values = outputs.past_key_values
     context.bot.send_message(chat_id=update.effective_chat.id, text=tokenizer.decode(tokens))
 
 
