@@ -18,7 +18,7 @@ REQUEST_KWARGS = {
     }
 }
 length = 200
-repetition_penalty = 0.1
+repetition_penalty = 0.3
 temperature = 1
 threshold = 0.3
 n = 3
