@@ -35,4 +35,11 @@ for pair in pairs:
     similarities[key] = f'{similarity_score:.3f}'
 
 # print results
+#
+# {'BERT # Clinical Course': '0.453',
+#  'BERT # GPT-3': '0.853',
+#  'BERT # RoBERTa': '0.792',
+#  'GPT-3 # Clinical Course': '0.463',
+#  'GPT-3 # RoBERTa': '0.823',
+#  'RoBERTa # Clinical Course': '0.441'}
 pprint(similarities, width=1)
