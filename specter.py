@@ -1,8 +1,11 @@
 import semanticscholar as sch
+import torch
 from transformers import AutoTokenizer, AutoModel
 import itertools
 import torch.nn.functional as F
 from pprint import pprint
+
+gpu = torch.device('cuda')
 
 # sample papers
 paper_ids = ['df2b0e26d0599ce3e70df8a9da02e51594e0e992',  # ”BERT”
@@ -16,11 +19,11 @@ paper_names = ["BERT", "GPT-3", "RoBERTa", "Clinical Course"]
 paper_texts = [p['title'] + ' ' + p['abstract'] for p in papers]
 
 # load model and tokenizer
-model = AutoModel.from_pretrained("allenai/specter")
+model = AutoModel.from_pretrained("allenai/specter").to(device=gpu)
 tokenizer = AutoTokenizer.from_pretrained("allenai/specter")
 
 # preprocess raw text
-inputs = [tokenizer(text, return_tensors='pt', truncation=True, max_length=512) for text in paper_texts]
+inputs = [tokenizer(text, return_tensors='pt', truncation=True, max_length=512).to(device=gpu) for text in paper_texts]
 
 # get embeddings
 embeddings = [model(**input).last_hidden_state[0, 0, :].detach() for input in inputs]
