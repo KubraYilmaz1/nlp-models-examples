@@ -16,7 +16,7 @@ for pair in test_data:
     tokens_input = tokenizer.encode(text="mrpc sentence1: " + pair['sentence1'] + " sentence2: " + pair['sentence2'],
                                     return_tensors="pt", max_length=1024, truncation=True)
     summary_ids = model.generate(tokens_input.to(gpu), min_length=1, max_length=10, length_penalty=4.0)
-    summary = tokenizer.decode(summary_ids[0])
+    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     # equivalent
     # not_equivalent
     print(summary)

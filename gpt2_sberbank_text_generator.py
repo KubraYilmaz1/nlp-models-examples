@@ -20,8 +20,7 @@ n = 3
 
 with torch.no_grad():
     for _ in range(length):
-        outputs = model(context, past_key_values=past_values)
-        logits = outputs.logits
+        logits, past_key_values = model(context, past_key_values=past_values, return_dict=False)
         ngrams = zip(*[tokens[i:] for i in range(n)])
         last_ngram_count = Counter(ngrams).get(tuple(tokens[-n:]))
         softmax_temp = 1
@@ -40,6 +39,6 @@ with torch.no_grad():
         res = sorted_indices[torch.multinomial(sorted_probs, num_samples=1).item()]
         tokens += [res.item()]
         context = res.unsqueeze(0)
-        past_values = outputs.past_key_values
+        past_values = past_key_values
 
 print(tokenizer.decode(tokens))

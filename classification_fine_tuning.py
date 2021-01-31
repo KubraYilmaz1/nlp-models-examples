@@ -107,7 +107,7 @@ for epoch in range(1, epochs + 1):
         outputs = model(batch["source_ids"].to(device=gpu),
                         attention_mask=batch["source_mask"].to(device=gpu),
                         decoder_attention_mask=batch['target_mask'].to(device=gpu),
-                        labels=lm_labels.to(device=gpu))
+                        labels=lm_labels.to(device=gpu), return_dict=False)
         loss = outputs[0]
         loss.backward()
         optimizer.step()
@@ -128,14 +128,14 @@ for epoch in range(1, epochs + 1):
         outputs = model(batch["source_ids"].to(device=gpu),
                         attention_mask=batch["source_mask"].to(device=gpu),
                         decoder_attention_mask=batch['target_mask'].to(device=gpu),
-                        labels=lm_labels.to(device=gpu))
+                        labels=lm_labels.to(device=gpu), return_dict=False)
         val_loss += outputs[0].item()
         nb_val_steps += 1
         outs = model.generate(input_ids=batch['source_ids'].cuda(),
                               attention_mask=batch['source_mask'].cuda(),
                               max_length=2)
-        dec = [tokenizer.decode(ids) for ids in outs]
-        target = [tokenizer.decode(ids) for ids in batch["target_ids"]]
+        dec = [tokenizer.decode(ids, skip_special_tokens=True) for ids in outs]
+        target = [tokenizer.decode(ids, skip_special_tokens=True) for ids in batch["target_ids"]]
         val_outputs.extend(dec)
         val_targets.extend(target)
     print(f"\nValidation loss={val_loss / nb_val_steps:.4f}\nValidation accuracy={metrics.accuracy_score(val_targets, val_outputs)}")
@@ -152,8 +152,8 @@ for batch in tqdm(loader, position=0, leave=True,
     outs = model.generate(input_ids=batch['source_ids'].cuda(),
                           attention_mask=batch['source_mask'].cuda(),
                           max_length=2)
-    dec = [tokenizer.decode(ids) for ids in outs]
-    target = [tokenizer.decode(ids) for ids in batch["target_ids"]]
+    dec = [tokenizer.decode(ids, skip_special_tokens=True) for ids in outs]
+    target = [tokenizer.decode(ids, skip_special_tokens=True) for ids in batch["target_ids"]]
     outputs.extend(dec)
     targets.extend(target)
 print("Test accuracy:", metrics.accuracy_score(targets, outputs))

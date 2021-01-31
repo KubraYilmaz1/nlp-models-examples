@@ -16,8 +16,7 @@ past_values = None
 
 with torch.no_grad():
     for _ in range(length):
-        outputs = model(context, past_key_values=past_values)
-        logits = outputs.logits
+        logits, past_key_values = model(context, past_key_values=past_values, return_dict=False)
         if past_values is None:
             next_token_logits = logits[0, -1, :] / temperature
         else:
@@ -27,6 +26,6 @@ with torch.no_grad():
         next_token = torch.argmax(next_token_logits)
         tokens += [next_token.item()]
         context = next_token.unsqueeze(0)
-        past_values = outputs.past_key_values
+        past_values = past_key_values
 
 print(tokenizer.decode(tokens))

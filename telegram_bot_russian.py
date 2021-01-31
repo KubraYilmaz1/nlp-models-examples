@@ -39,8 +39,7 @@ def reply(update, context):
     past_values = None
     with torch.no_grad():
         for _ in range(length):
-            outputs = model(context_gpt, past_key_values=past_values)
-            logits = outputs.logits
+            logits, past_key_values = model(context_gpt, past_key_values=past_values, return_dict=False)
             effective_n = user_n_gram.get(update.effective_chat.id, n)
             ngrams = zip(*[tokens[i:] for i in range(effective_n)])
             last_ngram_count = Counter(ngrams).get(tuple(tokens[-effective_n:]))
@@ -60,7 +59,7 @@ def reply(update, context):
             res = sorted_indices[torch.multinomial(sorted_probs, num_samples=1).item()]
             tokens += [res.item()]
             context_gpt = res.unsqueeze(0)
-            past_values = outputs.past_key_values
+            past_values = past_key_values
     context.bot.send_message(chat_id=update.effective_chat.id, text=tokenizer.decode(tokens))
 
 

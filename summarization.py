@@ -21,7 +21,7 @@ model = T5ForConditionalGeneration.from_pretrained('t5-large').to(gpu)
 tokenizer = T5Tokenizer.from_pretrained('t5-large')
 tokens_input = tokenizer.encode(text="summarize: " + context, return_tensors="pt", max_length=1024, truncation=True)
 summary_ids = model.generate(tokens_input.to(gpu), min_length=60, max_length=180, length_penalty=4.0)
-summary = tokenizer.decode(summary_ids[0])
+summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
 # the Apollo program, also known as Project Apollo, was the third human spaceflight program carried out by the
 # national aeronautics and space administration. it was dedicated to president john f. kennedy's national goal of

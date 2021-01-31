@@ -59,7 +59,7 @@ for question in questions:
     tokens_input = tokenizer.encode(text="question: " + question + " context: " + context, return_tensors="pt",
                                     max_length=1024, truncation=True)
     summary_ids = model.generate(tokens_input.to(gpu), min_length=10, max_length=100, length_penalty=4.0)
-    summary = tokenizer.decode(summary_ids[0])
+    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     print("Q:", question)
     print("A:", summary)
     print()
